@@ -13,7 +13,7 @@ function App() {
     const authChecked = useAuthCheck();
 
     return !authChecked ? (
-        <div>Checking Authentication...</div>
+        <div className="text-white">Checking Authentication...</div>
     ) : (
         <BrowserRouter>
             <Routes>

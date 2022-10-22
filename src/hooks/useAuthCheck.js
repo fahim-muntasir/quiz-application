@@ -1,27 +1,32 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { supabase } from "../config/supabaseClient";
 import { userLoggedIn } from "../fetures/auth/authSlice";
 
 export default function useAuthCheck() {
     const dispatch = useDispatch();
     const [authChecked, setAuthChecked] = useState(false);
 
-    useEffect(() => {
-        const localAuth = localStorage?.getItem("auth");
-
-        if (localAuth) {
-            const auth = JSON.parse(localAuth);
-            if (auth?.accessToken && auth?.user) {
-                dispatch(
-                    userLoggedIn({
-                        accessToken: auth.accessToken,
-                        user: auth.user,
-                    })
-                );
-            }
+    const checkSession = async () => {
+        const { data: auth } = await supabase.auth.getSession();
+        if (auth?.session?.access_token && auth?.session?.user) {
+            dispatch(
+                userLoggedIn({
+                    accessToken: auth.session.access_token,
+                    user: {
+                        id: auth.session.user.id,
+                        email: auth.session.user.email,
+                        name: auth.session.user.user_metadata?.name,
+                    },
+                })
+            );
         }
         setAuthChecked(true);
-    }, [dispatch, setAuthChecked]);
+    };
+
+    useEffect(() => {
+        checkSession();
+    }, []);
 
     return authChecked;
 }
