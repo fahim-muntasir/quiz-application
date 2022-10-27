@@ -53,6 +53,19 @@ const Navbar = () => {
                                 Create Quiz
                             </button>
                         </li>
+                        <li>
+                            <div className="w-8 h-8 rounded-full border border-[#525252] relative">
+                                <img
+                                    src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
+                                    alt="user"
+                                    className="w-full h-full rounded-full"
+                                />
+                                <span className="flex h-2 w-2 absolute bottom-0 right-0">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                </span>
+                            </div>
+                        </li>
                     </ul>
                 </nav>
             </div>
