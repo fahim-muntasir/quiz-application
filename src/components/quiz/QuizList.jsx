@@ -16,7 +16,14 @@ export default function QuizList({ modalOpen }) {
     let content = null;
 
     if (!isError && loading) {
-        content = <span className="text-white">Please wait...</span>;
+        content = (
+            <div>
+                <i
+                    className="fa fa-spinner text-white text-5xl animate-spin"
+                    aria-hidden="true"
+                ></i>
+            </div>
+        );
     }
 
     if (isError && !loading) {

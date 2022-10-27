@@ -14,7 +14,12 @@ function App() {
     const authChecked = useAuthCheck();
 
     return !authChecked ? (
-        <div className="text-white">Checking Authentication...</div>
+        <div className=" absolute w-full h-full flex justify-center items-center bg-[#1c1c1c] ">
+            <i
+                className="fa fa-spinner text-white text-5xl animate-spin"
+                aria-hidden="true"
+            ></i>
+        </div>
     ) : (
         <BrowserRouter>
             <Routes>
