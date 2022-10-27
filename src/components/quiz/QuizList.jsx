@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchQuiz } from "../../fetures/quiz/quizSlice";
 import AddQuizCard from "./AddQuizCard";
+import Blank from "./Blank";
 import QuizCard from "./QuizCard";
 
 export default function QuizList({ modalOpen }) {
@@ -17,12 +18,15 @@ export default function QuizList({ modalOpen }) {
 
     if (!isError && loading) {
         content = (
-            <div>
-                <i
-                    className="fa fa-spinner text-white text-5xl animate-spin"
-                    aria-hidden="true"
-                ></i>
-            </div>
+            <>
+                <Blank />
+                <Blank />
+                <Blank />
+                <Blank />
+                <Blank />
+                <Blank />
+                <Blank />
+            </>
         );
     }
 
