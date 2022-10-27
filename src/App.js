@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Dashboard from "./components/pages/dashboard/Dashboard";
 import Home from "./components/pages/home/Home";
+import NotFound from "./components/pages/NotFound";
 import Quiz from "./components/pages/quiz/Quiz";
 import Result from "./components/pages/result/Result";
 import SignIn from "./components/pages/signIn/SignIn";
@@ -58,13 +59,14 @@ function App() {
                     }
                 />
                 <Route
-                    path="/quiz/result"
+                    path="/quiz/result/:id"
                     element={
                         <PrivateRoute>
                             <Result />
                         </PrivateRoute>
                     }
                 />
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>
     );
