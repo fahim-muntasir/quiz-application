@@ -17,8 +17,12 @@ const authSlice = createSlice({
             state.accessToken = undefined;
             state.user = undefined;
         },
+        addParticipate: (state, { payload }) => {
+            state.user?.participate.push(payload);
+        },
     },
 });
 
 export default authSlice.reducer;
-export const { userLoggedIn, userLoggedOut } = authSlice.actions;
+export const { userLoggedIn, userLoggedOut, addParticipate } =
+    authSlice.actions;

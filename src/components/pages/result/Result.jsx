@@ -13,12 +13,27 @@ const totalMarkGenerate = (singlemark, totalQuestion) => {
 export default function Result() {
     const { singleQuiz, loading, isError, error } =
         useSelector((state) => state.quiz) || {};
+    const {
+        user: { participate },
+    } = useSelector((state) => state.auth);
+
     const dispatch = useDispatch();
     const { id } = useParams();
 
     useEffect(() => {
         dispatch(fetchSingleQuiz(id));
     }, [dispatch, id]);
+
+    // get get User Participate Quiz Result from user participate
+    const getUserParticipateQuizResult = (userParticipate) => {
+        let details = {};
+        userParticipate.forEach((element) => {
+            if (element.quizId == id) {
+                details = element;
+            }
+        });
+        return details;
+    };
 
     let content = null;
     if (!isError && loading) {
@@ -27,10 +42,14 @@ export default function Result() {
     if (isError && !loading) {
         content = <div className="text-white">{error}</div>;
     }
-    if (!isError && !loading && singleQuiz?.length === 1) {
-        const { questions, singleQuestionMark, subject } = singleQuiz[0] || {};
-        console.log(singleQuiz);
-        const percentage = 90;
+
+    const { quizId, result, quizMark } =
+        getUserParticipateQuizResult(participate);
+
+    if (!isError && !loading && singleQuiz?.length === 1 && quizId) {
+        const { questions, subject } = singleQuiz[0] || {};
+
+        const percentage = (result * 100) / quizMark;
 
         content = (
             <div className="container mx-auto px-5 md:px-0 lg:px-0">
@@ -42,10 +61,7 @@ export default function Result() {
                         <h2 className="font-semibold ">Your Total: 10</h2>
                         <span className="text-sm">
                             Total Mark:
-                            {totalMarkGenerate(
-                                singleQuestionMark,
-                                questions?.length
-                            )}
+                            {quizMark}
                         </span>
                         <br />
                         <span className="text-sm">Subject: {subject}</span>
@@ -80,6 +96,18 @@ export default function Result() {
                         </div>
                     </div>
                 ))}
+            </div>
+        );
+    }
+
+    if (!isError && !loading && singleQuiz?.length === 0) {
+        content = <div className="text-white">This quiz not found!</div>;
+    }
+
+    if (!isError && !loading && singleQuiz?.length === 1 && !quizId) {
+        content = (
+            <div className="text-white">
+                You don't participate in this quiz yet.
             </div>
         );
     }

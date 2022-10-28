@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { supabase } from "../../../config/supabaseClient";
+import { addParticipate } from "../../../fetures/auth/authSlice";
 import { fetchSingleQuiz } from "../../../fetures/quiz/quizSlice";
 import { resetAns } from "../../../fetures/quizAnswer/quizAnsSlice";
 import Layout from "../../common/Layout";
@@ -14,6 +16,15 @@ const countCurrentQuestion = (currentQuestionIndex, totalQuestion) => {
     return `${currentQuestionIndex + 1} of ${totalQuestion}`;
 };
 
+// const participate = [
+//     {
+//         quizId: 1,
+//         selectedAns: { 0: ["Javascript"] },
+//         result: 5,
+//         quizMark: 10,
+//     },
+// ];
+
 export default function Quiz() {
     const [questionIndex, setQuestionIndex] = useState(0);
     const [submitLoading, setSubmitLoading] = useState(false);
@@ -21,6 +32,7 @@ export default function Quiz() {
     const { loading, isError, error, singleQuiz } =
         useSelector((state) => state.quiz) || {};
     const { selectedAnswers } = useSelector((state) => state.quizAnswer);
+    const { user: currentUser } = useSelector((state) => state.auth);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -43,9 +55,14 @@ export default function Quiz() {
     console.log(selectedAnswers);
 
     // quiz submit handler
-    const quizSubmitHandler = () => {
+    const quizSubmitHandler = async () => {
         setSubmitLoading(true);
         const { questions, singleQuestionMark } = singleQuiz[0] || {};
+        const totalMark = totalMarkGenerate(
+            singleQuestionMark,
+            questions?.length
+        );
+
         const result = questions.reduce(
             (accumulator, currentValue, currentIndex) => {
                 // create an array to right answer
@@ -67,11 +84,29 @@ export default function Quiz() {
             0
         );
 
-        dispatch(resetAns());
-        navigate(`/quiz/result/${id}`);
-        setSubmitLoading(false);
+        try {
+            const newParticipate = {
+                quizId: id,
+                selectedAns: selectedAnswers,
+                result,
+                quizMark: totalMark,
+            };
 
-        console.log(result);
+            // update current user participate data
+            await supabase.auth.updateUser({
+                data: {
+                    participate: [...currentUser?.participate, newParticipate],
+                },
+            });
+
+            dispatch(addParticipate(newParticipate));
+            dispatch(resetAns());
+            navigate(`/quiz/result/${id}`);
+            setSubmitLoading(false);
+        } catch (err) {
+            setSubmitLoading(false);
+            alert(err);
+        }
     };
 
     let content = null;

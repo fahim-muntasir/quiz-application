@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "../../../config/supabaseClient";
 import Input from "../../ui/Input";
 import styles from "../pagestyle.module.css";
@@ -8,9 +8,6 @@ const Signup = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-
-    const navigate = useNavigate();
 
     const reset = () => {
         setName("");

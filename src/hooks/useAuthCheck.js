@@ -10,6 +10,7 @@ export default function useAuthCheck() {
     const checkSession = async () => {
         const { data: auth, error } = await supabase.auth.getSession();
         console.log(error);
+        console.log(auth);
         if (auth?.session?.access_token && auth?.session?.user) {
             dispatch(
                 userLoggedIn({
@@ -18,6 +19,8 @@ export default function useAuthCheck() {
                         id: auth.session.user.id,
                         email: auth.session.user.email,
                         name: auth.session.user.user_metadata?.name,
+                        participate:
+                            auth.session.user.user_metadata?.participate,
                     },
                 })
             );

@@ -9,7 +9,6 @@ import styles from "../pagestyle.module.css";
 const SignIn = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [errormsg, setError] = useState("");
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -35,6 +34,7 @@ const SignIn = () => {
                             id: data?.user?.id,
                             email: data?.user?.email,
                             name: data?.user?.user_metadata?.name,
+                            participate: data?.user?.user_metadata?.participate,
                         },
                     })
                 );
