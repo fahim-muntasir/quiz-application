@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { fetchSingleQuiz } from "../../../fetures/quiz/quizSlice";
+import { resetAns } from "../../../fetures/quizAnswer/quizAnsSlice";
 import Layout from "../../common/Layout";
 import SingleAnswer from "../../ui/SingleAnswer";
 
@@ -15,13 +16,19 @@ const countCurrentQuestion = (currentQuestionIndex, totalQuestion) => {
 
 export default function Quiz() {
     const [questionIndex, setQuestionIndex] = useState(0);
+    const [submitLoading, setSubmitLoading] = useState(false);
+
     const { loading, isError, error, singleQuiz } =
         useSelector((state) => state.quiz) || {};
+    const { selectedAnswers } = useSelector((state) => state.quizAnswer);
+
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const { id } = useParams();
 
     useEffect(() => {
+        // get a single quiz by quiz id
         dispatch(fetchSingleQuiz(id));
     }, [dispatch, id]);
 
@@ -31,6 +38,40 @@ export default function Quiz() {
 
     const previous = () => {
         setQuestionIndex((prev) => prev - 1);
+    };
+
+    console.log(selectedAnswers);
+
+    // quiz submit handler
+    const quizSubmitHandler = () => {
+        setSubmitLoading(true);
+        const { questions, singleQuestionMark } = singleQuiz[0] || {};
+        const result = questions.reduce(
+            (accumulator, currentValue, currentIndex) => {
+                // create an array to right answer
+                const quizAns = [];
+                quizAns.push(currentValue?.answer);
+
+                // selected ans for this quiz
+                const selectedAns = selectedAnswers?.[currentIndex];
+
+                // check correct
+                if (JSON.stringify(quizAns) === JSON.stringify(selectedAns)) {
+                    // eslint-disable-next-line no-unused-expressions
+                    return accumulator + singleQuestionMark;
+                } else {
+                    // eslint-disable-next-line no-unused-expressions
+                    return accumulator + 0;
+                }
+            },
+            0
+        );
+
+        dispatch(resetAns());
+        navigate(`/quiz/result/${id}`);
+        setSubmitLoading(false);
+
+        console.log(result);
     };
 
     let content = null;
@@ -112,14 +153,17 @@ export default function Quiz() {
                         </button>
                     )}
                     {questionIndex === questions?.length - 1 && (
-                        <Link to={`/quiz/result/${id}`}>
-                            <button
-                                onClick={next}
-                                className="bg-green-500 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-green-400"
-                            >
-                                Submit
-                            </button>
-                        </Link>
+                        <button
+                            onClick={quizSubmitHandler}
+                            disabled={submitLoading}
+                            className={` text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-green-400 ${
+                                submitLoading
+                                    ? "cursor-wait bg-green-400"
+                                    : "bg-green-500"
+                            }`}
+                        >
+                            Submit
+                        </button>
                     )}
                 </div>
             </>

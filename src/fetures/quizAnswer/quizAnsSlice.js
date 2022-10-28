@@ -25,8 +25,11 @@ const quizAnsSlice = createSlice({
                 state.selectedAnswers[currentQuestion] = [text];
             }
         },
+        resetAns: (state) => {
+            state.selectedAnswers = {};
+        },
     },
 });
 
 export default quizAnsSlice.reducer;
-export const { selectAns } = quizAnsSlice.actions;
+export const { selectAns, resetAns } = quizAnsSlice.actions;

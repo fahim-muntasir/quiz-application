@@ -16,7 +16,7 @@ export default function SingleAnswer({ text, questionIndex, ans }) {
 
     let content = null;
 
-    if (text === ans) {
+    if (selectedAnswers[questionIndex]?.includes(text) || text === ans) {
         content = (
             <button
                 disabled={ans ? true : false}
