@@ -6,10 +6,6 @@ import { fetchSingleQuiz } from "../../../fetures/quiz/quizSlice";
 import Layout from "../../common/Layout";
 import SingleAnswer from "../../ui/SingleAnswer";
 
-const totalMarkGenerate = (singlemark, totalQuestion) => {
-    return totalQuestion * singlemark;
-};
-
 export default function Result() {
     const { singleQuiz, loading, isError, error } =
         useSelector((state) => state.quiz) || {};
@@ -43,7 +39,7 @@ export default function Result() {
         content = <div className="text-white">{error}</div>;
     }
 
-    const { quizId, result, quizMark } =
+    const { quizId, result, quizMark, selectedAns } =
         getUserParticipateQuizResult(participate);
 
     if (!isError && !loading && singleQuiz?.length === 1 && quizId) {
@@ -58,7 +54,7 @@ export default function Result() {
                         <h2 className="font-semibold text-white text-2xl mb-2 ">
                             Your Result🏆
                         </h2>
-                        <h2 className="font-semibold ">Your Total: 10</h2>
+                        <h2 className="font-semibold ">Your Total: {result}</h2>
                         <span className="text-sm">
                             Total Mark:
                             {quizMark}
@@ -66,7 +62,7 @@ export default function Result() {
                         <br />
                         <span className="text-sm">Subject: {subject}</span>
                     </div>
-                    <div className="w-28">
+                    <div className="w-28 h-28">
                         <CircularProgressbar
                             value={percentage}
                             text={`${percentage}%`}
@@ -83,19 +79,97 @@ export default function Result() {
                     </div>
                 </div>
 
-                {questions.map((q) => (
-                    <div key={q?.question} className="text-white mb-10">
-                        <h1 className="text-2xl border-b border-[#525252] pb-2">
-                            Question: {q?.question}
-                        </h1>
-                        <div className="grid md:grid-cols-2 lg:md:grid-cols-2 gap-5 mt-10">
-                            <SingleAnswer text={q?.option1} ans={q?.answer} />
-                            <SingleAnswer text={q?.option2} ans={q?.answer} />
-                            <SingleAnswer text={q?.option3} ans={q?.answer} />
-                            <SingleAnswer text={q?.option4} ans={q?.answer} />
+                {questions.map((q, i) => {
+                    const a = selectedAns[i];
+                    const currectAns = [];
+                    currectAns.push(q?.answer);
+
+                    return (
+                        <div key={q?.question} className="text-white mb-10">
+                            <div className="border-b border-[#525252] flex items-center gap-2">
+                                {JSON.stringify(a) !==
+                                    JSON.stringify(currectAns) && (
+                                    <i
+                                        className="fa fa-times text-2xl text-red-500"
+                                        aria-hidden="true"
+                                    ></i>
+                                )}
+                                {JSON.stringify(a) ===
+                                    JSON.stringify(currectAns) && (
+                                    <i
+                                        className="fa fa-check text-2xl text-green-500"
+                                        aria-hidden="true"
+                                    ></i>
+                                )}
+
+                                <h1 className="text-2xl pb-2">
+                                    Question: {q?.question}
+                                </h1>
+                            </div>
+                            <div className="grid md:grid-cols-2 lg:md:grid-cols-2 gap-5 mt-10">
+                                {JSON.stringify(a) !==
+                                    JSON.stringify(currectAns) && (
+                                    <>
+                                        <SingleAnswer
+                                            text={q?.option1}
+                                            ans={q?.answer}
+                                            wrong={a?.includes(q?.option1)}
+                                            disabled
+                                        />
+                                        <SingleAnswer
+                                            text={q?.option2}
+                                            ans={q?.answer}
+                                            wrong={a?.includes(q?.option2)}
+                                            disabled
+                                        />
+                                        <SingleAnswer
+                                            text={q?.option3}
+                                            ans={q?.answer}
+                                            wrong={a?.includes(q?.option3)}
+                                            disabled
+                                        />
+                                        <SingleAnswer
+                                            text={q?.option4}
+                                            ans={q?.answer}
+                                            wrong={a?.includes(q?.option4)}
+                                            disabled
+                                        />
+                                    </>
+                                )}
+
+                                {JSON.stringify(a) ===
+                                    JSON.stringify(currectAns) && (
+                                    <>
+                                        <SingleAnswer
+                                            text={q?.option1}
+                                            ans={q?.answer}
+                                            currect={a?.includes(q?.option1)}
+                                            disabled
+                                        />
+                                        <SingleAnswer
+                                            text={q?.option2}
+                                            ans={q?.answer}
+                                            currect={a?.includes(q?.option2)}
+                                            disabled
+                                        />
+                                        <SingleAnswer
+                                            text={q?.option3}
+                                            ans={q?.answer}
+                                            currect={a?.includes(q?.option3)}
+                                            disabled
+                                        />
+                                        <SingleAnswer
+                                            text={q?.option4}
+                                            ans={q?.answer}
+                                            currect={a?.includes(q?.option4)}
+                                            disabled
+                                        />
+                                    </>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         );
     }

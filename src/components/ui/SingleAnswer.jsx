@@ -2,11 +2,13 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAns } from "../../fetures/quizAnswer/quizAnsSlice";
 
-// {
-//     "2": {"1": "React js", "2": "Vue js"}
-// }
-
-export default function SingleAnswer({ text, questionIndex, ans }) {
+export default function SingleAnswer({
+    text,
+    questionIndex,
+    currect,
+    wrong,
+    disabled,
+}) {
     const { selectedAnswers } = useSelector((state) => state.quizAnswer);
     const dispatch = useDispatch();
 
@@ -16,29 +18,52 @@ export default function SingleAnswer({ text, questionIndex, ans }) {
 
     let content = null;
 
-    if (selectedAnswers[questionIndex]?.includes(text) || text === ans) {
+    if (selectedAnswers[questionIndex]?.includes(text)) {
         content = (
             <button
-                disabled={ans ? true : false}
                 onClick={selectAnsHandler}
-                className={`text-white bg-green-500 border border-green-500 rounded-lg py-3 px-4 flex items-center gap-2 hover:bg-green-400 ${
-                    ans && "cursor-not-allowed"
-                }`}
+                className={`text-white bg-green-500 border border-green-500 rounded-lg py-3 px-4 flex items-center gap-2 hover:bg-green-400`}
             >
                 <i className="fa fa-check" aria-hidden="true"></i>
                 {text}
             </button>
         );
-    } else {
+    }
+
+    if (!selectedAnswers[questionIndex]?.includes(text)) {
         content = (
             <button
-                disabled={ans ? true : false}
+                disabled={disabled}
                 onClick={selectAnsHandler}
                 className={`text-white border border-[#525252] rounded-lg py-3 px-4 flex items-center gap-2 hover:bg-[#343434] ${
-                    ans && "cursor-not-allowed"
-                }`}
+                    disabled && "cursor-not-allowed"
+                } `}
             >
                 <i className="fa fa-circle text-xs" aria-hidden="true"></i>
+                {text}
+            </button>
+        );
+    }
+
+    if (currect) {
+        content = (
+            <button
+                disabled={disabled}
+                className={`text-white bg-green-500 border border-green-500 rounded-lg py-3 px-4 flex items-center gap-2 hover:bg-green-400 cursor-not-allowed`}
+            >
+                <i className="fa fa-check" aria-hidden="true"></i>
+                {text}
+            </button>
+        );
+    }
+
+    if (wrong) {
+        content = (
+            <button
+                disabled={disabled}
+                className={`text-white border border-red-500 rounded-lg py-3 px-4 flex items-center gap-2 hover:bg-[#343434] cursor-not-allowed`}
+            >
+                <i className="fa fa-times text-red-500" aria-hidden="true"></i>
                 {text}
             </button>
         );
