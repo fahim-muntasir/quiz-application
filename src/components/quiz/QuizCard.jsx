@@ -58,7 +58,7 @@ export default function QuizCard({ quiz }) {
         return () => {
             document.addEventListener("mousedown", handler);
         };
-    });
+    }, []);
 
     return (
         <div className=" relative h-60 border border-[#525252] rounded-lg">

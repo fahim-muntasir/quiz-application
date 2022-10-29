@@ -35,16 +35,22 @@ const Navbar = () => {
         <header className="bg-[#1C1C1C] py-2 px-5 md:px-0 lg:px-0 border-b border-[#525252]">
             <div className="container mx-auto flex justify-between items-center">
                 <Link to="/dashboard">
-                    <img src={logo} alt="..." className="w-20" />
+                    <img
+                        src={logo}
+                        alt="..."
+                        className="w-14 md:w-20 lg:w-20"
+                    />
                 </Link>
                 <nav>
                     <ul className="flex justify-end gap-2 md:gap-5 lg:gap-5 text-white text-sm items-center">
-                        <li>Hello, {name}</li>
+                        <li className="text-xs md:text-sm lg:text-sm">
+                            Hello, {name}
+                        </li>
                         <li>
                             <button
                                 disabled={loading}
                                 onClick={signOut}
-                                className="bg-[#343434] hover:bg-[#3f3f3f] border border-[#525252] rounded-lg py-0.5 px-2"
+                                className="bg-[#343434] hover:bg-[#3f3f3f] border border-[#525252] rounded-lg py-0.5 px-2 text-xs md:text-sm lg:text-sm"
                             >
                                 Sign out
                             </button>
@@ -52,13 +58,13 @@ const Navbar = () => {
                         <li>
                             <button
                                 onClick={() => dispatch(open())}
-                                className="bg-green-500 hover:bg-green-400  rounded-lg py-0.5 px-2"
+                                className="bg-green-500 hover:bg-green-400  rounded-lg py-0.5 px-2 text-xs md:text-sm lg:text-sm"
                             >
                                 Create Quiz
                             </button>
                         </li>
                         <li>
-                            <div className="w-8 h-8 rounded-full border border-[#525252] relative">
+                            <div className=" w-7 h-7 md:w-8 lg:w-8 md:h-8 lg:h-8 rounded-full border border-[#525252] relative">
                                 <img
                                     src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
                                     alt="user"
