@@ -8,9 +8,8 @@ export default function useAuthCheck() {
     const [authChecked, setAuthChecked] = useState(false);
 
     const checkSession = async () => {
-        const { data: auth, error } = await supabase.auth.getSession();
-        console.log(error);
-        console.log(auth);
+        const { data: auth } = await supabase.auth.getSession();
+
         if (auth?.session?.access_token && auth?.session?.user) {
             dispatch(
                 userLoggedIn({

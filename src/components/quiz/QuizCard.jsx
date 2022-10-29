@@ -1,17 +1,38 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import shareIcon from "../../assets/img/shareIcon.png";
 
 const totalMarkGenerate = (singlemark, totalQuestion) => {
     return totalQuestion * singlemark;
 };
 
+let useClickOutside = (handler) => {
+    let domNode = useRef();
+
+    useEffect(() => {
+        let maybeHandler = (event) => {
+            if (!domNode.current.contains(event.target)) {
+                handler();
+            }
+        };
+
+        document.addEventListener("mousedown", maybeHandler);
+
+        return () => {
+            document.removeEventListener("mousedown", maybeHandler);
+        };
+    });
+
+    return domNode;
+};
+
 export default function QuizCard({ quiz }) {
+    let [isOpen, setIsOpen] = useState(false);
+
     const { id, subject, singleQuestionMark, questions, admin } = quiz || {};
 
     const {
-        user: { participate },
+        user: { participate, email },
     } = useSelector((state) => state.auth);
 
     // check user participates or not
@@ -24,6 +45,20 @@ export default function QuizCard({ quiz }) {
         });
         return isId;
     };
+
+    const quizControlMenu = useRef();
+
+    useEffect(() => {
+        const handler = (event) => {
+            if (!quizControlMenu.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handler);
+        return () => {
+            document.addEventListener("mousedown", handler);
+        };
+    });
 
     return (
         <div className=" relative h-60 border border-[#525252] rounded-lg">
@@ -40,9 +75,36 @@ export default function QuizCard({ quiz }) {
                     Total Mark:
                     {totalMarkGenerate(singleQuestionMark, questions?.length)}
                 </span>
-                <a href="@">
-                    <img src={shareIcon} alt="shareIcon" className="w-4 h-5" />
-                </a>
+                <div className="relative" ref={quizControlMenu}>
+                    <button onClick={() => setIsOpen((isOpen) => !isOpen)}>
+                        <i
+                            className="fa fa-ellipsis-h text-white "
+                            aria-hidden="true"
+                        ></i>
+                    </button>
+                    {isOpen && (
+                        <div className="absolute bg-[#343434] top-1 -left-20 z-10 shadow-sm">
+                            <ul>
+                                <li className="flex items-center py-1 px-3 gap-1 cursor-pointer hover:bg-[#525252] text-white text-xs">
+                                    <i
+                                        className="fa fa-share"
+                                        aria-hidden="true"
+                                    ></i>
+                                    Share
+                                </li>
+                                {email === admin && (
+                                    <li className="flex items-center py-1 px-3 gap-1 cursor-pointer hover:bg-[#525252] text-white text-xs">
+                                        <i
+                                            className="fa fa-minus-circle"
+                                            aria-hidden="true"
+                                        ></i>
+                                        Delete
+                                    </li>
+                                )}
+                            </ul>
+                        </div>
+                    )}
+                </div>
             </div>
             <div className="px-2">
                 <span className="text-white text-sm">Subject: {subject}</span>

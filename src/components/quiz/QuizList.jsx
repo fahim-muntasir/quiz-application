@@ -10,8 +10,6 @@ export default function QuizList({ modalOpen }) {
         useSelector((state) => state.quiz) || {};
     const dispatch = useDispatch();
 
-    console.log(allQuiz);
-
     useEffect(() => {
         dispatch(fetchQuiz());
     }, [dispatch]);
