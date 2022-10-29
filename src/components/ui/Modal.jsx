@@ -46,6 +46,12 @@ export default function Modal() {
         ]);
     };
 
+    const removeHandler = (index) => {
+        const newQuestions = [...questions];
+        newQuestions.splice(index, 1);
+        setQuestions(newQuestions);
+    };
+
     const submitHandler = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -139,7 +145,7 @@ export default function Modal() {
 
                             return (
                                 <div key={index}>
-                                    <div className="mb-5">
+                                    <div className="mb-5 flex gap-3 items-center">
                                         <input
                                             type="text"
                                             name="question"
@@ -151,6 +157,15 @@ export default function Modal() {
                                             }
                                             required
                                         />
+                                        {questions?.length > 1 && (
+                                            <i
+                                                onClick={() =>
+                                                    removeHandler(index)
+                                                }
+                                                className="fa fa-times text-white cursor-pointer"
+                                                aria-hidden="true"
+                                            ></i>
+                                        )}
                                     </div>
 
                                     <div className="border-l border-[#525252]">
