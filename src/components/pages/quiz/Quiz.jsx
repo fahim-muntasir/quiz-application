@@ -93,8 +93,8 @@ export default function Quiz() {
 
             dispatch(addParticipate(newParticipate));
             dispatch(resetAns());
-            navigate(`/quiz/result/${id}`);
             setSubmitLoading(false);
+            navigate(`/quiz/result/${id}`);
         } catch (err) {
             setSubmitLoading(false);
             alert(err);

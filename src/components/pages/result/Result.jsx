@@ -45,7 +45,7 @@ export default function Result() {
     if (!isError && !loading && singleQuiz?.length === 1 && quizId) {
         const { questions, subject } = singleQuiz[0] || {};
 
-        const percentage = (result * 100) / quizMark;
+        const percentage = Math.floor((result * 100) / quizMark);
 
         content = (
             <div className="container mx-auto px-5 md:px-0 lg:px-0">
@@ -78,6 +78,7 @@ export default function Result() {
                         />
                     </div>
                 </div>
+                {/* this section will be dynamic later TODO */}
 
                 {questions.map((q, i) => {
                     const a = selectedAns[i];

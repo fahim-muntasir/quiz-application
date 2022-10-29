@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/img/logo.png";
 import { supabase } from "../../config/supabaseClient";
@@ -8,6 +8,10 @@ import { open } from "../../fetures/modal/modalSlice";
 
 const Navbar = () => {
     const [loading, setLoading] = useState(false);
+    const {
+        user: { name },
+    } = useSelector((state) => state.auth);
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -35,7 +39,7 @@ const Navbar = () => {
                 </Link>
                 <nav>
                     <ul className="flex justify-end gap-2 md:gap-5 lg:gap-5 text-white text-sm items-center">
-                        <li>Hello, Fahim muntasir</li>
+                        <li>Hello, {name}</li>
                         <li>
                             <button
                                 disabled={loading}

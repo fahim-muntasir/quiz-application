@@ -5,6 +5,7 @@ import { selectAns } from "../../fetures/quizAnswer/quizAnsSlice";
 export default function SingleAnswer({
     text,
     questionIndex,
+    ans,
     currect,
     wrong,
     disabled,
@@ -45,7 +46,7 @@ export default function SingleAnswer({
         );
     }
 
-    if (currect) {
+    if (currect || ans === text) {
         content = (
             <button
                 disabled={disabled}

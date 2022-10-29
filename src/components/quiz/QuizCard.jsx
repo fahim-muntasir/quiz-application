@@ -3,8 +3,12 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import shareIcon from "../../assets/img/shareIcon.png";
 
+const totalMarkGenerate = (singlemark, totalQuestion) => {
+    return totalQuestion * singlemark;
+};
+
 export default function QuizCard({ quiz }) {
-    const { id, subject } = quiz || {};
+    const { id, subject, singleQuestionMark, questions } = quiz || {};
 
     const {
         user: { participate },
@@ -27,13 +31,16 @@ export default function QuizCard({ quiz }) {
                 <h1 className="text-3xl font-semibold text-white">Quiz</h1>
             </div>
             <div className="flex justify-between px-2 items-center">
-                <span className="text-white text-sm">Total Mark: 10</span>
+                <span className="text-white text-sm">
+                    Total Mark:
+                    {totalMarkGenerate(singleQuestionMark, questions?.length)}
+                </span>
                 <a href="@">
                     <img src={shareIcon} alt="shareIcon" className="w-4 h-5" />
                 </a>
             </div>
             <div className="px-2">
-                <h2 className="text-white font-semibold">Subject: {subject}</h2>
+                <span className="text-white text-sm">Subject: {subject}</span>
             </div>
             {checkParticipate() ? (
                 <Link to={`/quiz/result/${id}`}>

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { supabase } from "../../config/supabaseClient";
 import { close } from "../../fetures/modal/modalSlice";
+import { addQuiz } from "../../fetures/quiz/quizSlice";
 
 export default function Modal() {
     const [loading, setLoading] = useState(false);
@@ -17,6 +18,10 @@ export default function Modal() {
     ]);
     const [subjectName, setSubjectName] = useState("");
     const [singleQuestionMark, setSingleQuestionMark] = useState("");
+
+    const {
+        user: { email: userEmail },
+    } = useSelector((state) => state.auth) || {};
 
     const dispatch = useDispatch();
 
@@ -44,19 +49,43 @@ export default function Modal() {
     const submitHandler = async (e) => {
         e.preventDefault();
         setLoading(true);
+
+        // submit data
         const quizData = {
             subject: subjectName,
             singleQuestionMark,
+            admin: userEmail,
             questions,
         };
-        try {
-            const { error } = await supabase.from("quiz").insert(quizData);
-            if (error) {
-                alert(error);
+
+        // each quiz is checked for answere
+        const checkAns = questions.map((e) => (e.answer !== "" ? true : false));
+
+        if (!checkAns?.includes(false)) {
+            try {
+                const { data, error } = await supabase
+                    .from("quiz")
+                    .insert(quizData)
+                    .select();
+                if (error) {
+                    alert(error);
+                }
+
+                if (data?.length === 1) {
+                    dispatch(addQuiz(data[0]));
+                }
+
+                setLoading(false);
+
+                // close modal
+                dispatch(close());
+            } catch (err) {
+                setLoading(false);
+                alert(err);
             }
+        } else {
             setLoading(false);
-        } catch (err) {
-            alert(err);
+            alert("Quiz can't be submitted without answering them!");
         }
     };
 
@@ -104,93 +133,156 @@ export default function Modal() {
                             />
                         </div>
 
-                        {questions.map((singleQuestion, index) => (
-                            <div key={index}>
-                                <div className="mb-5">
-                                    <input
-                                        type="text"
-                                        name="question"
-                                        className="w-full outline-none bg-transparent py-2 px-5 border border-[#525252] rounded-lg text-white"
-                                        placeholder="Question..."
-                                        value={singleQuestion.question}
-                                        onChange={(e) =>
-                                            questionHandler(e, index)
-                                        }
-                                        required
-                                    />
-                                </div>
+                        {questions.map((singleQuestion, index) => {
+                            const { option1, option2, option3, option4 } =
+                                questions[index] || {};
 
-                                <div className="border-l border-[#525252]">
-                                    <div className="w-[250px] md:w-[490px] lg:w-[490px] ml-auto">
-                                        <div className="mb-5">
-                                            <input
-                                                type="text"
-                                                name="option1"
-                                                className="w-full outline-none bg-transparent py-2 px-5 border border-[#525252] rounded-lg text-white"
-                                                placeholder="Option 1"
-                                                value={singleQuestion.option1}
-                                                onChange={(e) =>
-                                                    questionHandler(e, index)
-                                                }
-                                                required
-                                            />
-                                        </div>
-                                        <div className="mb-5">
-                                            <input
-                                                type="text"
-                                                name="option2"
-                                                className="w-full outline-none bg-transparent py-2 px-5 border border-[#525252] rounded-lg text-white"
-                                                placeholder="Option 2"
-                                                value={singleQuestion.option2}
-                                                onChange={(e) =>
-                                                    questionHandler(e, index)
-                                                }
-                                                required
-                                            />
-                                        </div>
-                                        <div className="mb-5">
-                                            <input
-                                                type="text"
-                                                name="option3"
-                                                className="w-full outline-none bg-transparent py-2 px-5 border border-[#525252] rounded-lg text-white"
-                                                placeholder="Option 3"
-                                                value={singleQuestion.option3}
-                                                onChange={(e) =>
-                                                    questionHandler(e, index)
-                                                }
-                                                required
-                                            />
-                                        </div>
-                                        <div className="mb-5">
-                                            <input
-                                                type="text"
-                                                name="option4"
-                                                className="w-full outline-none bg-transparent py-2 px-5 border border-[#525252] rounded-lg text-white"
-                                                placeholder="Option 4"
-                                                value={singleQuestion.option4}
-                                                onChange={(e) =>
-                                                    questionHandler(e, index)
-                                                }
-                                                required
-                                            />
-                                        </div>
-                                        <div className="mb-5">
-                                            <input
-                                                type="text"
-                                                name="answer"
-                                                className="w-full outline-none bg-transparent py-2 px-5 border border-[#525252] rounded-lg text-white"
-                                                placeholder="Answer..."
-                                                value={singleQuestion.answer}
-                                                onChange={(e) =>
-                                                    questionHandler(e, index)
-                                                }
-                                                required
-                                            />
+                            return (
+                                <div key={index}>
+                                    <div className="mb-5">
+                                        <input
+                                            type="text"
+                                            name="question"
+                                            className="w-full outline-none bg-transparent py-2 px-5 border border-[#525252] rounded-lg text-white"
+                                            placeholder="Question..."
+                                            value={singleQuestion.question}
+                                            onChange={(e) =>
+                                                questionHandler(e, index)
+                                            }
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="border-l border-[#525252]">
+                                        <div className="w-[250px] md:w-[490px] lg:w-[490px] ml-auto">
+                                            <div className="mb-5">
+                                                <input
+                                                    type="text"
+                                                    name="option1"
+                                                    className="w-full outline-none bg-transparent py-2 px-5 border border-[#525252] rounded-lg text-white"
+                                                    placeholder="Option 1"
+                                                    value={
+                                                        singleQuestion.option1
+                                                    }
+                                                    onChange={(e) =>
+                                                        questionHandler(
+                                                            e,
+                                                            index
+                                                        )
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="mb-5">
+                                                <input
+                                                    type="text"
+                                                    name="option2"
+                                                    className="w-full outline-none bg-transparent py-2 px-5 border border-[#525252] rounded-lg text-white"
+                                                    placeholder="Option 2"
+                                                    value={
+                                                        singleQuestion.option2
+                                                    }
+                                                    onChange={(e) =>
+                                                        questionHandler(
+                                                            e,
+                                                            index
+                                                        )
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="mb-5">
+                                                <input
+                                                    type="text"
+                                                    name="option3"
+                                                    className="w-full outline-none bg-transparent py-2 px-5 border border-[#525252] rounded-lg text-white"
+                                                    placeholder="Option 3"
+                                                    value={
+                                                        singleQuestion.option3
+                                                    }
+                                                    onChange={(e) =>
+                                                        questionHandler(
+                                                            e,
+                                                            index
+                                                        )
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="mb-5">
+                                                <input
+                                                    type="text"
+                                                    name="option4"
+                                                    className="w-full outline-none bg-transparent py-2 px-5 border border-[#525252] rounded-lg text-white"
+                                                    placeholder="Option 4"
+                                                    value={
+                                                        singleQuestion.option4
+                                                    }
+                                                    onChange={(e) =>
+                                                        questionHandler(
+                                                            e,
+                                                            index
+                                                        )
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="mb-5">
+                                                <select
+                                                    disabled={
+                                                        !(
+                                                            option1 &&
+                                                            option2 &&
+                                                            option3 &&
+                                                            option4
+                                                        )
+                                                    }
+                                                    name="answer"
+                                                    className="w-full outline-none bg-transparent py-2 px-5 border border-[#525252] rounded-lg text-gray-300"
+                                                    value={
+                                                        singleQuestion.answer
+                                                    }
+                                                    onChange={(e) =>
+                                                        questionHandler(
+                                                            e,
+                                                            index
+                                                        )
+                                                    }
+                                                >
+                                                    <option disabled value="">
+                                                        Answer...
+                                                    </option>
+                                                    <option
+                                                        value={option1}
+                                                        className="text-gray-500"
+                                                    >
+                                                        {option1}
+                                                    </option>
+                                                    <option
+                                                        value={option2}
+                                                        className="text-gray-500"
+                                                    >
+                                                        {option2}
+                                                    </option>
+                                                    <option
+                                                        value={option3}
+                                                        className="text-gray-500"
+                                                    >
+                                                        {option3}
+                                                    </option>
+                                                    <option
+                                                        value={option4}
+                                                        className="text-gray-500"
+                                                    >
+                                                        {option4}
+                                                    </option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
 
                         <div>
                             <span
