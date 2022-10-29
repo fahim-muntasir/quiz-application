@@ -32,10 +32,10 @@ export default function Result() {
     };
 
     let content = null;
-    if (!isError && loading) {
+    if (!isError && loading && singleQuiz?.length === 0) {
         content = <div className="text-white">please wait...</div>;
     }
-    if (isError && !loading) {
+    if (isError && !loading && singleQuiz?.length === 0) {
         content = <div className="text-white">{error}</div>;
     }
 

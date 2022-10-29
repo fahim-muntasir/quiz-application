@@ -8,7 +8,7 @@ const totalMarkGenerate = (singlemark, totalQuestion) => {
 };
 
 export default function QuizCard({ quiz }) {
-    const { id, subject, singleQuestionMark, questions } = quiz || {};
+    const { id, subject, singleQuestionMark, questions, admin } = quiz || {};
 
     const {
         user: { participate },
@@ -27,8 +27,13 @@ export default function QuizCard({ quiz }) {
 
     return (
         <div className=" relative h-60 border border-[#525252] rounded-lg">
-            <div className="bg-purple-500 h-36 flex items-center justify-center mb-2 rounded-t-lg">
+            <div className="bg-purple-500 h-36 flex items-center justify-center mb-2 rounded-t-lg relative">
                 <h1 className="text-3xl font-semibold text-white">Quiz</h1>
+                <div className=" absolute bottom-0 left-0 bg-yellow-300 px-2 after:content[''] after:w-5 after:h-full after:bg-red-400 ">
+                    <span className="text-xs text-gray-600">
+                        @{admin?.split("@")[0]}
+                    </span>
+                </div>
             </div>
             <div className="flex justify-between px-2 items-center">
                 <span className="text-white text-sm">
