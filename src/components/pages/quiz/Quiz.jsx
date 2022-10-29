@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { supabase } from "../../../config/supabaseClient";
 import { addParticipate } from "../../../fetures/auth/authSlice";
 import { fetchSingleQuiz } from "../../../fetures/quiz/quizSlice";
@@ -16,15 +16,6 @@ const countCurrentQuestion = (currentQuestionIndex, totalQuestion) => {
     return `${currentQuestionIndex + 1} of ${totalQuestion}`;
 };
 
-// const participate = [
-//     {
-//         quizId: 1,
-//         selectedAns: { 0: ["Javascript"] },
-//         result: 5,
-//         quizMark: 10,
-//     },
-// ];
-
 export default function Quiz() {
     const [questionIndex, setQuestionIndex] = useState(0);
     const [submitLoading, setSubmitLoading] = useState(false);
@@ -37,6 +28,7 @@ export default function Quiz() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    // single quiz id
     const { id } = useParams();
 
     useEffect(() => {
@@ -44,15 +36,15 @@ export default function Quiz() {
         dispatch(fetchSingleQuiz(id));
     }, [dispatch, id]);
 
+    // next quiz handler
     const next = () => {
         setQuestionIndex((prev) => prev + 1);
     };
 
+    // previous quiz handler
     const previous = () => {
         setQuestionIndex((prev) => prev - 1);
     };
-
-    console.log(selectedAnswers);
 
     // quiz submit handler
     const quizSubmitHandler = async () => {
@@ -109,6 +101,17 @@ export default function Quiz() {
         }
     };
 
+    // check user participates or not
+    const checkParticipate = () => {
+        let isId = false;
+        currentUser["participate"].forEach((element) => {
+            if (element.quizId == id) {
+                isId = true;
+            }
+        });
+        return isId;
+    };
+
     let content = null;
     if (!isError && loading) {
         content = <div className="text-white">Loading...</div>;
@@ -116,8 +119,7 @@ export default function Quiz() {
     if (!loading && isError) {
         content = <div className="text-red-500">{error}</div>;
     }
-    if (!loading && !isError && singleQuiz?.length > 0) {
-        console.log(singleQuiz);
+    if (!loading && !isError && singleQuiz?.length > 0 && !checkParticipate()) {
         const { subject, singleQuestionMark, questions } = singleQuiz[0] || {};
         const currentQuestion = questions?.[questionIndex];
 
@@ -209,6 +211,29 @@ export default function Quiz() {
         content = (
             <div className="text-center text-white">
                 Not found quiz through your ID.
+            </div>
+        );
+    }
+
+    if (checkParticipate()) {
+        content = (
+            <div className="text-center pt-5">
+                <span className="text-white">
+                    You are already participating in this quiz so you can't
+                    participate now.
+                </span>
+                <div className=" space-x-4 pt-10 ">
+                    <Link to="/dashboard">
+                        <button className="bg-green-500 hover:bg-green-400  rounded-lg py-0.5 px-2 text-white text-sm">
+                            Go to Home
+                        </button>
+                    </Link>
+                    <Link to={`/quiz/result/${id}`}>
+                        <button className=" bg-yellow-500 hover:bg-yellow-400  rounded-lg py-0.5 px-2 text-white text-sm">
+                            Result
+                        </button>
+                    </Link>
+                </div>
             </div>
         );
     }
