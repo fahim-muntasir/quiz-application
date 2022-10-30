@@ -140,11 +140,11 @@ export default function Quiz() {
                     </span>
                 </div>
                 <div className="text-white flex justify-between items-center border-b border-[#525252] pb-2">
-                    <h1 className="text-2xl">
-                        Question:
+                    <h1 className="text-xl md:text-2xl lg:text-2xl">
+                        <span className=" font-semibold">Question:- </span>
                         {currentQuestion?.question}
                     </h1>
-                    <span className="text-xs w-10">
+                    <span className="text-xs w-24 text-right">
                         {countCurrentQuestion(questionIndex, questions?.length)}
                     </span>
                 </div>
@@ -170,7 +170,7 @@ export default function Quiz() {
                     {questionIndex > 0 ? (
                         <button
                             onClick={previous}
-                            className="bg-green-500 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-green-400"
+                            className="bg-green-500 text-white px-5 py-2 rounded-lg text-sm font-semibold md:hover:bg-green-400 lg:hover:bg-green-400"
                         >
                             Previous
                         </button>
@@ -185,7 +185,7 @@ export default function Quiz() {
                     {questionIndex < questions?.length - 1 && (
                         <button
                             onClick={next}
-                            className="bg-green-500 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-green-400"
+                            className="bg-green-500 text-white px-5 py-2 rounded-lg text-sm font-semibold md:hover:bg-green-400 lg:hover:bg-green-400"
                         >
                             Next
                         </button>
@@ -194,12 +194,18 @@ export default function Quiz() {
                         <button
                             onClick={quizSubmitHandler}
                             disabled={submitLoading}
-                            className={` text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-green-400 ${
+                            className={` text-white px-4 py-2 rounded-lg text-sm font-semibold md:hover:bg-green-400 lg:hover:bg-green-400 ${
                                 submitLoading
-                                    ? "cursor-wait bg-green-400"
+                                    ? "cursor-wait bg-green-400 "
                                     : "bg-green-500"
                             }`}
                         >
+                            {submitLoading && (
+                                <i
+                                    className="fa fa-spinner mr-1 animate-spin"
+                                    aria-hidden="true"
+                                ></i>
+                            )}
                             Submit
                         </button>
                     )}
