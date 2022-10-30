@@ -23,10 +23,10 @@ export default function SingleAnswer({
         content = (
             <button
                 onClick={selectAnsHandler}
-                className={`text-white bg-green-500 border border-green-500 rounded-lg py-3 px-4 flex items-center gap-2 hover:bg-green-400`}
+                className={`text-white bg-green-500 border border-green-500 rounded-lg py-3 px-4 flex items-center gap-2 hover:bg-green-400 text-sm`}
             >
                 <i className="fa fa-check" aria-hidden="true"></i>
-                {text}
+                <span className="text-left">{text}</span>
             </button>
         );
     }
@@ -36,12 +36,15 @@ export default function SingleAnswer({
             <button
                 disabled={disabled}
                 onClick={selectAnsHandler}
-                className={`text-white border border-[#525252] rounded-lg py-3 px-4 flex items-center gap-2 hover:bg-[#343434] ${
+                className={`text-white border border-[#525252] rounded-lg py-3 px-4 flex items-center gap-2 hover:bg-[#343434] text-sm ${
                     disabled && "cursor-not-allowed"
-                } `}
+                }`}
             >
-                <i className="fa fa-circle text-xs" aria-hidden="true"></i>
-                {text}
+                <i
+                    className="fa fa-circle text-xs text-[#525252]"
+                    aria-hidden="true"
+                ></i>
+                <span className="text-left">{text}</span>
             </button>
         );
     }
@@ -50,10 +53,10 @@ export default function SingleAnswer({
         content = (
             <button
                 disabled={disabled}
-                className={`text-white bg-green-500 border border-green-500 rounded-lg py-3 px-4 flex items-center gap-2 hover:bg-green-400 cursor-not-allowed`}
+                className={`text-white bg-green-500 border border-green-500 rounded-lg py-3 px-4 flex items-center gap-2 cursor-not-allowed text-sm`}
             >
                 <i className="fa fa-check" aria-hidden="true"></i>
-                {text}
+                <span className="text-left">{text}</span>
             </button>
         );
     }
@@ -62,10 +65,10 @@ export default function SingleAnswer({
         content = (
             <button
                 disabled={disabled}
-                className={`text-white border border-red-500 rounded-lg py-3 px-4 flex items-center gap-2 hover:bg-[#343434] cursor-not-allowed`}
+                className={`text-white border border-red-500 rounded-lg py-3 px-4 flex items-center gap-2 text-sm cursor-not-allowed`}
             >
                 <i className="fa fa-times text-red-500" aria-hidden="true"></i>
-                {text}
+                <span className="text-left">{text}</span>
             </button>
         );
     }

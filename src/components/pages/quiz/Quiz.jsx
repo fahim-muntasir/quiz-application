@@ -141,9 +141,10 @@ export default function Quiz() {
                 </div>
                 <div className="text-white flex justify-between items-center border-b border-[#525252] pb-2">
                     <h1 className="text-2xl">
-                        Question: {currentQuestion?.question}
+                        Question:
+                        {currentQuestion?.question}
                     </h1>
-                    <span className="text-xs">
+                    <span className="text-xs w-10">
                         {countCurrentQuestion(questionIndex, questions?.length)}
                     </span>
                 </div>

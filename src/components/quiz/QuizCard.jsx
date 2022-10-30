@@ -6,26 +6,6 @@ const totalMarkGenerate = (singlemark, totalQuestion) => {
     return totalQuestion * singlemark;
 };
 
-let useClickOutside = (handler) => {
-    let domNode = useRef();
-
-    useEffect(() => {
-        let maybeHandler = (event) => {
-            if (!domNode.current.contains(event.target)) {
-                handler();
-            }
-        };
-
-        document.addEventListener("mousedown", maybeHandler);
-
-        return () => {
-            document.removeEventListener("mousedown", maybeHandler);
-        };
-    });
-
-    return domNode;
-};
-
 export default function QuizCard({ quiz }) {
     let [isOpen, setIsOpen] = useState(false);
 
@@ -38,7 +18,7 @@ export default function QuizCard({ quiz }) {
     // check user participates or not
     const checkParticipate = () => {
         let isId = false;
-        participate.forEach((element) => {
+        participate?.forEach((element) => {
             if (element.quizId == id) {
                 isId = true;
             }

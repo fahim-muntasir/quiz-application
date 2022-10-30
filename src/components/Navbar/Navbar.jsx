@@ -38,7 +38,7 @@ const Navbar = () => {
                     <img
                         src={logo}
                         alt="..."
-                        className="w-14 md:w-20 lg:w-20"
+                        className="w-16 md:w-20 lg:w-20"
                     />
                 </Link>
                 <nav>
@@ -50,7 +50,7 @@ const Navbar = () => {
                             <button
                                 disabled={loading}
                                 onClick={signOut}
-                                className="bg-[#343434] hover:bg-[#3f3f3f] border border-[#525252] rounded-lg py-0.5 px-2 text-xs md:text-sm lg:text-sm"
+                                className="bg-[#343434] hover:bg-[#3f3f3f] border border-[#525252] rounded-lg py-0.5 px-2 text-sm"
                             >
                                 Sign out
                             </button>
@@ -58,7 +58,7 @@ const Navbar = () => {
                         <li>
                             <button
                                 onClick={() => dispatch(open())}
-                                className="bg-green-500 hover:bg-green-400  rounded-lg py-0.5 px-2 text-xs md:text-sm lg:text-sm"
+                                className="bg-green-500 hover:bg-green-400  rounded-lg py-0.5 px-2 text-sm"
                             >
                                 Create Quiz
                             </button>

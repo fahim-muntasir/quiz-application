@@ -102,7 +102,7 @@ export default function Modal() {
                 className="fixed w-full h-full bg-[#343434be] inset-0 z-10 "
             ></div>
             <div
-                className={`bg-[#1C1C1C] w-[100%] md:w-[600px] lg:w-[600px] h-[640px] rounded-lg z-20 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 overflow-y-auto `}
+                className={`bg-[#1C1C1C] w-[92%] md:w-[600px] lg:w-[600px] h-[640px] rounded-lg z-20 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 overflow-y-auto `}
             >
                 <div className="flex justify-between px-5 border-b border-[#525252] py-3 text-white sticky top-0 z-50 bg-[#1C1C1C]">
                     <span className=" font-semibold ">Create Quiz</span>
@@ -169,7 +169,7 @@ export default function Modal() {
                                     </div>
 
                                     <div className="border-l border-[#525252]">
-                                        <div className="w-[250px] md:w-[490px] lg:w-[490px] ml-auto">
+                                        <div className="w-[320px] md:w-[490px] lg:w-[490px] ml-auto">
                                             <div className="mb-5">
                                                 <input
                                                     type="text"

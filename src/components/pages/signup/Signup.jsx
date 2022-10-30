@@ -24,6 +24,7 @@ const Signup = () => {
                 options: {
                     data: {
                         name,
+                        participate: [],
                     },
                 },
             });
