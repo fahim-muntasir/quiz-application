@@ -23,7 +23,7 @@ export default function SingleAnswer({
         content = (
             <button
                 onClick={selectAnsHandler}
-                className={`text-white bg-green-500 border border-green-500 rounded-lg py-3 px-4 flex items-center gap-2 hover:bg-green-400 text-sm`}
+                className={`text-white bg-green-500 border border-green-500 rounded-lg py-3 px-4 flex items-center gap-2 md:hover:bg-green-400 lg:hover:bg-green-400 text-sm`}
             >
                 <i className="fa fa-check" aria-hidden="true"></i>
                 <span className="text-left">{text}</span>
@@ -36,7 +36,7 @@ export default function SingleAnswer({
             <button
                 disabled={disabled}
                 onClick={selectAnsHandler}
-                className={`text-white border border-[#525252] rounded-lg py-3 px-4 flex items-center gap-2 hover:bg-[#343434] text-sm ${
+                className={`text-white border border-[#525252] rounded-lg py-3 px-4 flex items-center gap-2 md:hover:bg-[#343434] lg:hover:bg-[#343434] text-sm ${
                     disabled && "cursor-not-allowed"
                 }`}
             >

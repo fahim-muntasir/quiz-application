@@ -29,6 +29,17 @@ const quizSlice = createSlice({
         addQuiz: (state, { payload }) => {
             state.allQuiz.push(payload);
         },
+        changeStatus: (state, { payload }) => {
+            state.allQuiz = state.allQuiz.map((quiz) => {
+                if (payload.id === quiz.id) {
+                    return {
+                        ...quiz,
+                        activeStatus: !quiz.activeStatus,
+                    };
+                }
+                return quiz;
+            });
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -72,4 +83,4 @@ const quizSlice = createSlice({
 });
 
 export default quizSlice.reducer;
-export const { addQuiz } = quizSlice.actions;
+export const { addQuiz, changeStatus } = quizSlice.actions;
