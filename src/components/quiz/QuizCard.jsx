@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { supabase } from "../../config/supabaseClient";
 import { changeStatus } from "../../fetures/quiz/quizSlice";
 
 const totalMarkGenerate = (singlemark, totalQuestion) => {
@@ -9,6 +10,7 @@ const totalMarkGenerate = (singlemark, totalQuestion) => {
 
 export default function QuizCard({ quiz }) {
     let [isOpen, setIsOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const { id, subject, singleQuestionMark, questions, admin, activeStatus } =
         quiz || {};
@@ -44,8 +46,25 @@ export default function QuizCard({ quiz }) {
         };
     }, []);
 
-    const quizPauseHandler = () => {
-        dispatch(changeStatus({ id }));
+    // quiz status change handler
+    const quizPauseHandler = async () => {
+        setLoading(true);
+        try {
+            // update this quiz active status
+            const { data } = await supabase
+                .from("quiz")
+                .update({ activeStatus: !activeStatus })
+                .match({ id })
+                .select();
+
+            if (data[0].id) {
+                dispatch(changeStatus({ id }));
+            }
+            setLoading(false);
+        } catch (err) {
+            setLoading(false);
+            alert(err);
+        }
     };
 
     return (
@@ -76,7 +95,9 @@ export default function QuizCard({ quiz }) {
                             </span>
                         </div>
                     </div>
-                    <div className="relative grid justify-center items-center gap-2">
+                    <div
+                        className={`relative grid justify-center items-center gap-2`}
+                    >
                         <div ref={quizControlMenu}>
                             <button
                                 onClick={() => setIsOpen((isOpen) => !isOpen)}
@@ -109,40 +130,47 @@ export default function QuizCard({ quiz }) {
                                 </div>
                             )}
                         </div>
-                        <div>
-                            <div className="flex items-center justify-center w-full">
-                                <label
-                                    htmlFor={id}
-                                    className="flex items-center cursor-pointer"
-                                >
-                                    <div className="relative">
-                                        <input
-                                            id={id}
-                                            type="checkbox"
-                                            className="sr-only"
-                                            checked={
-                                                activeStatus ? true : false
-                                            }
-                                            onChange={quizPauseHandler}
-                                        />
-                                        <div
-                                            className={`w-5 h-2 rounded-full shadow-inner ${
-                                                activeStatus
-                                                    ? "bg-green-500"
-                                                    : "bg-gray-400"
-                                            }`}
-                                        ></div>
+                        {email === admin && (
+                            <div>
+                                <div className="flex items-center justify-center w-full">
+                                    <label
+                                        htmlFor={id}
+                                        className={`flex items-center ${
+                                            loading
+                                                ? "cursor-wait"
+                                                : "cursor-pointer"
+                                        } `}
+                                    >
+                                        <div className="relative">
+                                            <input
+                                                id={id}
+                                                disabled={loading}
+                                                type="checkbox"
+                                                className="sr-only"
+                                                checked={
+                                                    activeStatus ? true : false
+                                                }
+                                                onChange={quizPauseHandler}
+                                            />
+                                            <div
+                                                className={`w-5 h-2 rounded-full shadow-inner ${
+                                                    activeStatus
+                                                        ? "bg-green-500"
+                                                        : "bg-gray-400"
+                                                } ${loading && "bg-gray-300"}`}
+                                            ></div>
 
-                                        <div
-                                            className={`dot absolute w-3 h-3 rounded-full shadow -left-1 -top-0.5 transition bg-white ${
-                                                activeStatus &&
-                                                " translate-x-full"
-                                            }`}
-                                        ></div>
-                                    </div>
-                                </label>
+                                            <div
+                                                className={`dot absolute w-3 h-3 rounded-full shadow -left-1 -top-0.5 transition bg-white ${
+                                                    activeStatus &&
+                                                    " translate-x-full"
+                                                }`}
+                                            ></div>
+                                        </div>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -158,6 +186,12 @@ export default function QuizCard({ quiz }) {
                         Participate Now
                     </button>
                 </Link>
+            )}
+
+            {!activeStatus && (
+                <button className="bg-green-400 rounded-b-lg py-1.5 md:py-1 lg:py-1 text-white text-sm font-semibold absolute bottom-0 right-0 left-0 cursor-default">
+                    Pause
+                </button>
             )}
         </div>
     );
