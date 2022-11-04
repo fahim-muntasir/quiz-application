@@ -61,6 +61,7 @@ export default function Modal() {
             subject: subjectName,
             singleQuestionMark,
             admin: userEmail,
+            activeStatus: true,
             questions,
         };
 

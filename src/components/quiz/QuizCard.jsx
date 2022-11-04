@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { supabase } from "../../config/supabaseClient";
@@ -10,7 +11,11 @@ const totalMarkGenerate = (singlemark, totalQuestion) => {
 
 export default function QuizCard({ quiz }) {
     let [isOpen, setIsOpen] = useState(false);
+    let [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [copied, setCopied] = useState(false);
+
+    const URL = window.location.origin;
 
     const { id, subject, singleQuestionMark, questions, admin, activeStatus } =
         quiz || {};
@@ -36,7 +41,7 @@ export default function QuizCard({ quiz }) {
 
     useEffect(() => {
         const handler = (event) => {
-            if (!quizControlMenu.current.contains(event.target)) {
+            if (!quizControlMenu.current?.contains(event.target)) {
                 setIsOpen(false);
             }
         };
@@ -65,6 +70,18 @@ export default function QuizCard({ quiz }) {
             setLoading(false);
             alert(err);
         }
+    };
+
+    const modalOpenHide = () => {
+        setIsModalOpen(!isModalOpen);
+    };
+
+    const copyController = () => {
+        setCopied(true);
+
+        setTimeout(() => {
+            setCopied(false);
+        }, 3000);
     };
 
     return (
@@ -110,12 +127,34 @@ export default function QuizCard({ quiz }) {
                             {isOpen && (
                                 <div className="absolute bg-[#343434] top-1 -left-20 z-10 shadow-sm">
                                     <ul>
-                                        <li className="flex items-center py-1 px-3 gap-1 cursor-pointer hover:bg-[#525252] text-white text-xs">
-                                            <i
-                                                className="fa fa-share"
-                                                aria-hidden="true"
-                                            ></i>
-                                            Share
+                                        <li
+                                            onClick={modalOpenHide}
+                                            className=" relative py-1 px-3 cursor-pointer hover:bg-[#525252] text-white text-xs"
+                                        >
+                                            <CopyToClipboard
+                                                text={`${URL}/quiz/${id}`}
+                                                onCopy={copyController}
+                                            >
+                                                <span className="flex items-center gap-1">
+                                                    <i
+                                                        className="fa fa-share"
+                                                        aria-hidden="true"
+                                                    ></i>
+                                                    Share
+                                                </span>
+                                            </CopyToClipboard>
+
+                                            {copied && (
+                                                <div className="absolute -top-7 bg-[#525252] py-1 px-1.5 rounded-lg flex gap-1 items-center left-[50%] -translate-x-[50%]">
+                                                    <i
+                                                        className="fa fa-check text-green-500"
+                                                        aria-hidden="true"
+                                                    ></i>
+                                                    <span className="font-semibold ">
+                                                        Copied
+                                                    </span>
+                                                </div>
+                                            )}
                                         </li>
                                         {email === admin && (
                                             <li className="flex items-center py-1 px-3 gap-1 cursor-pointer hover:bg-[#525252] text-white text-xs">
