@@ -227,7 +227,7 @@ export default function QuizCard({ quiz }) {
                 </Link>
             )}
 
-            {!activeStatus && (
+            {!activeStatus && !checkParticipate() && (
                 <button className="bg-green-400 rounded-b-lg py-1.5 md:py-1 lg:py-1 text-white text-sm font-semibold absolute bottom-0 right-0 left-0 cursor-default">
                     Pause
                 </button>

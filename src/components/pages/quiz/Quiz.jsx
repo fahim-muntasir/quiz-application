@@ -245,6 +245,23 @@ export default function Quiz() {
         );
     }
 
+    if (!loading && !isError && !singleQuiz[0]?.["activeStatus"]) {
+        content = (
+            <div className="text-center pt-5 space-y-4">
+                <span className="text-white">
+                    This quiz is paused! so you can't participate now.
+                </span>
+                <div>
+                    <Link to="/dashboard">
+                        <button className="bg-green-500 hover:bg-green-400  rounded-lg py-0.5 px-2 text-white text-sm">
+                            Go to Home
+                        </button>
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <Layout>
             <section>
