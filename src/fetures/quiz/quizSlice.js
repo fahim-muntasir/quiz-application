@@ -3,17 +3,22 @@ import { supabase } from "../../config/supabaseClient";
 
 const initialState = {
     loading: false,
+    deleting: false,
+    deleteIsError: false,
+    deleteError: "",
     error: "",
     isError: false,
     allQuiz: [],
     singleQuiz: [],
 };
 
+// get all quiz
 export const fetchQuiz = createAsyncThunk("quiz/fetchQuiz", async () => {
     const { data } = await supabase.from("quiz").select();
     return data;
 });
 
+// get single quiz
 export const fetchSingleQuiz = createAsyncThunk(
     "quiz/fetchSingleQuiz",
     async (id) => {
@@ -21,6 +26,12 @@ export const fetchSingleQuiz = createAsyncThunk(
         return data;
     }
 );
+
+// delete quiz
+export const deleteQuiz = createAsyncThunk("quiz/deleteQuiz", async (id) => {
+    const { data } = await supabase.from("quiz").delete().eq("id", id).select();
+    return data?.[0];
+});
 
 const quizSlice = createSlice({
     name: "quiz",
@@ -78,6 +89,24 @@ const quizSlice = createSlice({
                 state.isError = true;
                 state.error = action?.error?.message;
                 state.singleQuiz = [];
+            })
+            .addCase(deleteQuiz.pending, (state) => {
+                state.deleting = true;
+                state.deleteIsError = false;
+                state.deleteError = "";
+            })
+            .addCase(deleteQuiz.fulfilled, (state, { payload }) => {
+                state.deleting = false;
+                state.deleteIsError = false;
+                state.deleteError = "";
+                state.allQuiz = state.allQuiz.filter(
+                    (quiz) => quiz.id !== payload.id
+                );
+            })
+            .addCase(deleteQuiz.rejected, (state, action) => {
+                state.deleting = false;
+                state.deleteIsError = true;
+                state.deleteError = action?.error?.message;
             });
     },
 });

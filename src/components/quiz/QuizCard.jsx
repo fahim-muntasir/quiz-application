@@ -3,7 +3,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { supabase } from "../../config/supabaseClient";
-import { changeStatus } from "../../fetures/quiz/quizSlice";
+import { changeStatus, deleteQuiz } from "../../fetures/quiz/quizSlice";
 
 const totalMarkGenerate = (singlemark, totalQuestion) => {
     return totalQuestion * singlemark;
@@ -23,6 +23,9 @@ export default function QuizCard({ quiz }) {
     const {
         user: { participate, email },
     } = useSelector((state) => state.auth);
+    const { deleting, deleteIsError, deleteError } = useSelector(
+        (state) => state.quiz
+    );
 
     const dispatch = useDispatch();
 
@@ -39,6 +42,7 @@ export default function QuizCard({ quiz }) {
 
     const quizControlMenu = useRef();
 
+    // hide quiz action menu by outside crick
     useEffect(() => {
         const handler = (event) => {
             if (!quizControlMenu.current?.contains(event.target)) {
@@ -50,6 +54,13 @@ export default function QuizCard({ quiz }) {
             document.addEventListener("mousedown", handler);
         };
     }, []);
+
+    // check delete error;
+    useEffect(() => {
+        if (deleteIsError && deleteError) {
+            alert(deleteError);
+        }
+    }, [deleteIsError, deleteError]);
 
     // quiz status change handler
     const quizPauseHandler = async () => {
@@ -84,9 +95,17 @@ export default function QuizCard({ quiz }) {
         }, 3000);
     };
 
+    // quiz delete handler
+    const quizDeleteHandler = () => {
+        const checkSurety = window.confirm("Are you sure to delete this quiz?");
+        if (checkSurety) {
+            dispatch(deleteQuiz(id));
+        }
+    };
+
     return (
-        <div className=" relative border border-[#525252] rounded-lg">
-            <div className="bg-purple-500 h-36 flex items-center justify-center rounded-t-lg relative">
+        <div className=" relative border border-[#525252] rounded-md">
+            <div className="bg-purple-500 h-36 flex items-center justify-center rounded-t-md relative">
                 <h1 className="text-3xl font-semibold text-white">Quiz</h1>
                 <div className=" absolute bottom-0 left-0 bg-yellow-300 px-2 after:content[''] after:w-5 after:h-full after:bg-red-400 ">
                     <span className="text-xs text-gray-600">
@@ -157,12 +176,25 @@ export default function QuizCard({ quiz }) {
                                             )}
                                         </li>
                                         {email === admin && (
-                                            <li className="flex items-center py-1 px-3 gap-1 cursor-pointer hover:bg-[#525252] text-white text-xs">
-                                                <i
-                                                    className="fa fa-minus-circle"
-                                                    aria-hidden="true"
-                                                ></i>
-                                                Delete
+                                            <li>
+                                                <button
+                                                    disabled={deleting}
+                                                    onClick={quizDeleteHandler}
+                                                    className={`flex items-center py-1 px-3 gap-1 hover:bg-[#525252] text-white text-xs ${
+                                                        deleting &&
+                                                        "cursor-wait bg-[#525252]"
+                                                    }`}
+                                                >
+                                                    {deleting ? (
+                                                        <i className="fa fa-spinner animate-spin"></i>
+                                                    ) : (
+                                                        <i
+                                                            className="fa fa-minus-circle text-red-400"
+                                                            aria-hidden="true"
+                                                        ></i>
+                                                    )}
+                                                    Delete
+                                                </button>
                                             </li>
                                         )}
                                     </ul>
@@ -215,20 +247,20 @@ export default function QuizCard({ quiz }) {
             </div>
             {checkParticipate() ? (
                 <Link to={`/quiz/result/${id}`}>
-                    <button className="bg-green-500 rounded-b-lg py-1.5 md:py-1 lg:py-1 text-white md:hover:bg-green-400 lg:hover:bg-green-400 text-sm font-semibold absolute bottom-0 right-0 left-0">
+                    <button className="bg-green-500 rounded-b-md py-1.5 md:py-1 lg:py-1 text-white md:hover:bg-green-400 lg:hover:bg-green-400 text-sm font-semibold absolute bottom-0 right-0 left-0">
                         Quiz Result
                     </button>
                 </Link>
             ) : (
                 <Link to={`/quiz/${id}`}>
-                    <button className="bg-green-500 rounded-b-lg py-1.5 md:py-1 lg:py-1 text-white md:hover:bg-green-400 lg:hover:bg-green-400 text-sm font-semibold absolute bottom-0 right-0 left-0">
+                    <button className="bg-green-500 rounded-b-md py-1.5 md:py-1 lg:py-1 text-white md:hover:bg-green-400 lg:hover:bg-green-400 text-sm font-semibold absolute bottom-0 right-0 left-0">
                         Participate Now
                     </button>
                 </Link>
             )}
 
             {!activeStatus && !checkParticipate() && (
-                <button className="bg-green-400 rounded-b-lg py-1.5 md:py-1 lg:py-1 text-white text-sm font-semibold absolute bottom-0 right-0 left-0 cursor-default">
+                <button className="bg-green-400 rounded-b-md py-1.5 md:py-1 lg:py-1 text-white text-sm font-semibold absolute bottom-0 right-0 left-0 cursor-default">
                     Pause
                 </button>
             )}
