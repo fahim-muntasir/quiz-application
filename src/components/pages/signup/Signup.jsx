@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../../../config/supabaseClient";
+import InfoAlert from "../../ui/InfoAlert";
 import Input from "../../ui/Input";
 import styles from "../pagestyle.module.css";
 
@@ -8,6 +9,8 @@ const Signup = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isAlert, setIsAlert] = useState(false);
+    const [emailForAlert, setEmailForAlert] = useState("");
 
     const reset = () => {
         setName("");
@@ -17,8 +20,9 @@ const Signup = () => {
 
     const submitHandler = async (e) => {
         e.preventDefault();
+        setEmailForAlert(email);
         try {
-            const { data, error } = await supabase.auth.signUp({
+            const { error } = await supabase.auth.signUp({
                 email,
                 password,
                 options: {
@@ -31,6 +35,7 @@ const Signup = () => {
             if (error) {
                 alert(error);
             }
+            setIsAlert(true);
             reset();
         } catch (err) {
             alert(err.message);
@@ -43,6 +48,13 @@ const Signup = () => {
                 <h1 className="text-5xl text-center mx-auto mb-10 text-white">
                     Sign Up
                 </h1>
+
+                {isAlert && (
+                    <InfoAlert
+                        text={`Please check your email "${emailForAlert}" to verify and login.`}
+                    />
+                )}
+
                 <form onSubmit={submitHandler}>
                     <div className="mb-5">
                         <Input
@@ -50,6 +62,7 @@ const Signup = () => {
                             placeholder="Name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            required
                         />
                     </div>
                     <div className="mb-5">
@@ -58,6 +71,7 @@ const Signup = () => {
                             placeholder="Email address"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            required
                         />
                     </div>
                     <div className="mb-1">
@@ -66,6 +80,7 @@ const Signup = () => {
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
                     </div>
                     <div className="mb-5">
