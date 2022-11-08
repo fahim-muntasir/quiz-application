@@ -10,6 +10,7 @@ const initialState = {
     isError: false,
     allQuiz: [],
     singleQuiz: [],
+    createdQuizzes: [],
 };
 
 // get all quiz
@@ -17,6 +18,18 @@ export const fetchQuiz = createAsyncThunk("quiz/fetchQuiz", async () => {
     const { data } = await supabase.from("quiz").select();
     return data;
 });
+
+// get user created quizzes
+export const fetchCreatedQuizzes = createAsyncThunk(
+    "quiz/fetchCreatedQuizzes",
+    async (email) => {
+        const { data } = await supabase
+            .from("quiz")
+            .select()
+            .eq("admin", email);
+        return data;
+    }
+);
 
 // get single quiz
 export const fetchSingleQuiz = createAsyncThunk(
@@ -38,10 +51,10 @@ const quizSlice = createSlice({
     initialState,
     reducers: {
         addQuiz: (state, { payload }) => {
-            state.allQuiz.push(payload);
+            state.createdQuizzes.push(payload);
         },
         changeStatus: (state, { payload }) => {
-            state.allQuiz = state.allQuiz.map((quiz) => {
+            state.createdQuizzes = state.createdQuizzes.map((quiz) => {
                 if (payload.id === quiz.id) {
                     return {
                         ...quiz,
@@ -90,6 +103,24 @@ const quizSlice = createSlice({
                 state.error = action?.error?.message;
                 state.singleQuiz = [];
             })
+            .addCase(fetchCreatedQuizzes.pending, (state) => {
+                state.loading = true;
+                state.isError = false;
+                state.error = "";
+                state.createdQuizzes = [];
+            })
+            .addCase(fetchCreatedQuizzes.fulfilled, (state, { payload }) => {
+                state.loading = false;
+                state.isError = false;
+                state.error = "";
+                state.createdQuizzes = payload;
+            })
+            .addCase(fetchCreatedQuizzes.rejected, (state, action) => {
+                state.loading = false;
+                state.isError = true;
+                state.error = action?.error?.message;
+                state.createdQuizzes = [];
+            })
             .addCase(deleteQuiz.pending, (state) => {
                 state.deleting = true;
                 state.deleteIsError = false;
@@ -99,7 +130,7 @@ const quizSlice = createSlice({
                 state.deleting = false;
                 state.deleteIsError = false;
                 state.deleteError = "";
-                state.allQuiz = state.allQuiz.filter(
+                state.createdQuizzes = state.createdQuizzes.filter(
                     (quiz) => quiz.id !== payload.id
                 );
             })
