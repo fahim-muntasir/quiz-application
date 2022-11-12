@@ -63,6 +63,7 @@ export default function Modal() {
             admin: userEmail,
             activeStatus: true,
             questions,
+            allparticipants: [],
         };
 
         // each quiz is checked for answere

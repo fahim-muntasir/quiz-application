@@ -14,7 +14,7 @@ export default function QuizList({ modalOpen }) {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(fetchQuiz());
+        dispatch(fetchQuiz(user?.id));
         dispatch(fetchCreatedQuizzes(user?.email));
     }, [dispatch, user]);
 
@@ -69,9 +69,12 @@ export default function QuizList({ modalOpen }) {
                     All participated quizzes
                 </h2>
                 <div className="grid grid-cols-1 gap-10 md:grid-cols-3 lg:grid-cols-4 md:gap-10 lg:gap-16 pt-5">
-                    {allQuiz.map((quiz) => (
-                        <QuizCard key={quiz?.id} quiz={quiz} />
-                    ))}
+                    {allQuiz.map(
+                        (quiz) =>
+                            quiz?.admin !== user?.email && (
+                                <QuizCard key={quiz?.id} quiz={quiz} />
+                            )
+                    )}
                 </div>
             </div>
         );

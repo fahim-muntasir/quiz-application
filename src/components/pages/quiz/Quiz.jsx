@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { supabase } from "../../../config/supabaseClient";
 import { addParticipate } from "../../../fetures/auth/authSlice";
-import { fetchSingleQuiz } from "../../../fetures/quiz/quizSlice";
+import {
+    addQuizParticipant,
+    fetchSingleQuiz,
+} from "../../../fetures/quiz/quizSlice";
 import { resetAns } from "../../../fetures/quizAnswer/quizAnsSlice";
 import Layout from "../../common/Layout";
 import SingleAnswer from "../../ui/SingleAnswer";
@@ -91,6 +94,17 @@ export default function Quiz() {
                 },
             });
 
+            await supabase
+                .from("quiz")
+                .update({
+                    allparticipants: [
+                        ...singleQuiz?.[0]?.allparticipants,
+                        currentUser?.id,
+                    ],
+                })
+                .eq("id", id);
+
+            dispatch(addQuizParticipant({ id, participate: currentUser }));
             dispatch(addParticipate(newParticipate));
             dispatch(resetAns());
             setSubmitLoading(false);

@@ -14,7 +14,7 @@ const initialState = {
 };
 
 // get all quiz
-export const fetchQuiz = createAsyncThunk("quiz/fetchQuiz", async () => {
+export const fetchQuiz = createAsyncThunk("quiz/fetchQuiz", async (userid) => {
     const { data } = await supabase.from("quiz").select();
     return data;
 });
@@ -59,6 +59,20 @@ const quizSlice = createSlice({
                     return {
                         ...quiz,
                         activeStatus: !quiz.activeStatus,
+                    };
+                }
+                return quiz;
+            });
+        },
+        addQuizParticipant: (state, { payload }) => {
+            state.allQuiz.map((quiz) => {
+                if (quiz.id === payload.quizId) {
+                    return {
+                        ...quiz,
+                        allparticipants: [
+                            ...quiz.allparticipants,
+                            payload.participant,
+                        ],
                     };
                 }
                 return quiz;
@@ -143,4 +157,4 @@ const quizSlice = createSlice({
 });
 
 export default quizSlice.reducer;
-export const { addQuiz, changeStatus } = quizSlice.actions;
+export const { addQuiz, changeStatus, addQuizParticipant } = quizSlice.actions;
