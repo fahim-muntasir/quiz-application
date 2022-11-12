@@ -17,8 +17,15 @@ export default function QuizCard({ quiz }) {
 
     const URL = window.location.origin;
 
-    const { id, subject, singleQuestionMark, questions, admin, activeStatus } =
-        quiz || {};
+    const {
+        id,
+        subject,
+        singleQuestionMark,
+        questions,
+        admin,
+        activeStatus,
+        allparticipants,
+    } = quiz || {};
 
     const {
         user: { participate, email },
@@ -105,8 +112,8 @@ export default function QuizCard({ quiz }) {
 
     return (
         <div className=" relative border border-[#525252] rounded-md">
-            <div className="bg-purple-500 h-36 flex items-center justify-center rounded-t-md relative">
-                <h1 className="text-3xl font-semibold text-white">Quiz</h1>
+            <div className="bg-purple-500 h-32 flex items-center justify-center rounded-t-md relative">
+                <h1 className="text-3xl font-semibold text-white">Quiz 10</h1>
                 <div className=" absolute bottom-0 left-0 bg-yellow-300 px-2 after:content[''] after:w-5 after:h-full after:bg-red-400 ">
                     <span className="text-xs text-gray-600">
                         @{admin?.split("@")[0]}
@@ -117,17 +124,31 @@ export default function QuizCard({ quiz }) {
                 <div className="flex justify-between px-2 items-center">
                     <div>
                         <div>
-                            <span className="text-white text-xs">
-                                Total Mark:
-                                {totalMarkGenerate(
-                                    singleQuestionMark,
-                                    questions?.length
-                                )}
+                            <span className="text-white text-xs font-semibold">
+                                Subject: {subject}
                             </span>
                         </div>
                         <div>
-                            <span className="text-white text-xs">
-                                Subject: {subject}
+                            <span className="text-white text-xs font-semibold">
+                                Total Mark:{" "}
+                                <span className="bg-[#343434] px-3 py-1 rounded-lg">
+                                    {totalMarkGenerate(
+                                        singleQuestionMark,
+                                        questions?.length
+                                    )}
+                                </span>
+                            </span>
+                        </div>
+                        <div>
+                            <span className="text-white text-xs font-semibold">
+                                Total Participates:{" "}
+                                <span className="bg-[#343434] px-3 py-1 rounded-lg">
+                                    <i
+                                        className="fa fa-users text-xs"
+                                        aria-hidden="true"
+                                    ></i>{" "}
+                                    {allparticipants?.length}
+                                </span>
                             </span>
                         </div>
                     </div>
