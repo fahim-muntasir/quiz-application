@@ -4,6 +4,7 @@ import Home from "./components/pages/home/Home";
 import NotFound from "./components/pages/NotFound";
 import Quiz from "./components/pages/quiz/Quiz";
 import Result from "./components/pages/result/Result";
+import SearchResult from "./components/pages/searchResult/SearchResult";
 import SignIn from "./components/pages/signIn/SignIn";
 import Signup from "./components/pages/signup/Signup";
 import PrivateRoute from "./components/PrivateRoute";
@@ -68,6 +69,14 @@ function App() {
                     element={
                         <PrivateRoute>
                             <Result />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/quiz/search"
+                    element={
+                        <PrivateRoute>
+                            <SearchResult />
                         </PrivateRoute>
                     }
                 />

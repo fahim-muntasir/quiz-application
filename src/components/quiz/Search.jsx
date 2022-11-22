@@ -1,37 +1,63 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+    resetFilter,
+    search,
+    searchReset,
+    setSearchBy,
+    setStatusType,
+} from "../../fetures/filter/filterSlice";
 
 export default function Search() {
-    const [searchQuery, setSearchQuery] = useState("");
     const [searchSettingIsOpen, setSearchSettingIsOpen] = useState(false);
+    const { searchQuery, statusType, searchBy } = useSelector(
+        (state) => state.filter
+    );
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const searchHandler = (e) => {
+        dispatch(search(e.target.value));
+    };
+
+    const submitHandler = (e) => {
+        e.preventDefault();
+        navigate(`/quiz/search?t=admin&s=active&q=${searchQuery}`);
+    };
 
     return (
         <div className="pt-5 w-full md:w-8/12 lg:w-7/12 relative">
             <div className="relative w-full">
-                <div className="hover:bg-[#424242] cursor-pointer transition text-xl text-gray-200 absolute left-4 top-[50%] -translate-y-[50%] w-9 h-9 flex items-center justify-center rounded-full">
-                    <i className="fa fa-search" aria-hidden="true"></i>
-                </div>
-                <input
-                    type="text"
-                    placeholder="Search quizzes..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className=" text-gray-200 bg-[#2c2c2ce8]  focus:bg-[#343434] focus:shadow-[0px_0px_1px_1px_#404040a6] py-3.5 rounded-md outline-none px-16 w-full"
-                />
-                {searchQuery && (
-                    <div
-                        onClick={() => setSearchQuery("")}
-                        className="hover:bg-[#424242] cursor-pointer transition text-xl text-gray-200 absolute right-14 top-[50%] -translate-y-[50%] w-9 h-9 flex items-center justify-center rounded-full"
-                    >
-                        <i className="fa fa-times" aria-hidden="true"></i>
+                <form onSubmit={submitHandler}>
+                    <div className="hover:bg-[#424242] cursor-pointer transition text-xl text-gray-200 absolute left-4 top-[50%] -translate-y-[50%] w-9 h-9 flex items-center justify-center rounded-full">
+                        <i className="fa fa-search" aria-hidden="true"></i>
                     </div>
-                )}
+                    <input
+                        type="text"
+                        placeholder="Search quizzes..."
+                        value={searchQuery}
+                        onChange={searchHandler}
+                        className=" text-gray-200 bg-[#2c2c2ce8]  focus:bg-[#343434] focus:shadow-[0px_0px_1px_1px_#404040a6] py-3.5 rounded-md outline-none px-16 w-full"
+                    />
+                    {searchQuery && (
+                        <div
+                            onClick={() => dispatch(searchReset())}
+                            className="hover:bg-[#424242] cursor-pointer transition text-xl text-gray-200 absolute right-14 top-[50%] -translate-y-[50%] w-9 h-9 flex items-center justify-center rounded-full"
+                        >
+                            <i className="fa fa-times" aria-hidden="true"></i>
+                        </div>
+                    )}
 
-                <div
-                    onClick={() => setSearchSettingIsOpen(!searchSettingIsOpen)}
-                    className="hover:bg-[#424242] cursor-pointer transition text-xl text-gray-200 absolute right-4 top-[50%] -translate-y-[50%] w-9 h-9 flex items-center justify-center rounded-full"
-                >
-                    <i className="fa fa-tasks" aria-hidden="true"></i>
-                </div>
+                    <div
+                        onClick={() =>
+                            setSearchSettingIsOpen(!searchSettingIsOpen)
+                        }
+                        className="hover:bg-[#424242] cursor-pointer transition text-xl text-gray-200 absolute right-4 top-[50%] -translate-y-[50%] w-9 h-9 flex items-center justify-center rounded-full"
+                    >
+                        <i className="fa fa-tasks" aria-hidden="true"></i>
+                    </div>
+                </form>
             </div>
 
             {searchSettingIsOpen && (
@@ -55,19 +81,25 @@ export default function Search() {
                                         <select
                                             name=""
                                             id=""
-                                            className=" bg-transparent border-b text-gray-200 text-sm outline-none w-40 "
+                                            className=" bg-transparent border-b text-gray-200 text-sm outline-none w-40"
+                                            value={searchBy}
+                                            onChange={(e) =>
+                                                dispatch(
+                                                    setSearchBy(e.target.value)
+                                                )
+                                            }
                                         >
                                             <option
-                                                value=""
-                                                className="text-gray-800"
-                                            >
-                                                Admin
-                                            </option>
-                                            <option
-                                                value=""
+                                                value="subject"
                                                 className="text-gray-800"
                                             >
                                                 Subject
+                                            </option>
+                                            <option
+                                                value="admin"
+                                                className="text-gray-800"
+                                            >
+                                                Admin
                                             </option>
                                         </select>
                                     </td>
@@ -82,14 +114,29 @@ export default function Search() {
                                         <div>
                                             <input
                                                 type="checkbox"
-                                                className="mr-1"
+                                                className="mr-1 cursor-pointer"
+                                                checked={statusType}
+                                                onChange={() =>
+                                                    dispatch(
+                                                        setStatusType(true)
+                                                    )
+                                                }
                                             />
                                             <span>Active</span>
                                         </div>
                                         <div>
                                             <input
                                                 type="checkbox"
-                                                className="mr-1"
+                                                className="mr-1 cursor-pointer"
+                                                checked={
+                                                    !statusType &&
+                                                    statusType !== ""
+                                                }
+                                                onChange={() =>
+                                                    dispatch(
+                                                        setStatusType(false)
+                                                    )
+                                                }
                                             />
                                             <span>Pause</span>
                                         </div>
@@ -99,7 +146,10 @@ export default function Search() {
                         </table>
                     </div>
                     <div className=" text-right ">
-                        <button className=" uppercase text-gray-200 text-xs ">
+                        <button
+                            onClick={() => dispatch(resetFilter())}
+                            className=" uppercase text-gray-200 text-xs "
+                        >
                             Reset
                         </button>
                     </div>
