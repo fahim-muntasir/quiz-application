@@ -94,12 +94,19 @@ export default function Quiz() {
                 },
             });
 
+            // update the quiz participants
             await supabase
                 .from("quiz")
                 .update({
                     allparticipants: [
                         ...singleQuiz?.[0]?.allparticipants,
-                        currentUser?.id,
+                        {
+                            userId: currentUser?.id,
+                            participantName: currentUser?.name,
+                            selectedAns: selectedAnswers,
+                            result,
+                            quizMark: totalMark,
+                        },
                     ],
                 })
                 .eq("id", id);

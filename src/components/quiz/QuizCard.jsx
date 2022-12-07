@@ -9,9 +9,8 @@ const totalMarkGenerate = (singlemark, totalQuestion) => {
     return totalQuestion * singlemark;
 };
 
-export default function QuizCard({ quiz }) {
+export default function QuizCard({ quiz, controller }) {
     let [isOpen, setIsOpen] = useState(false);
-    let [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [copied, setCopied] = useState(false);
 
@@ -89,11 +88,6 @@ export default function QuizCard({ quiz }) {
             alert(err);
         }
     };
-
-    const modalOpenHide = () => {
-        setIsModalOpen(!isModalOpen);
-    };
-
     const copyController = () => {
         setCopied(true);
 
@@ -113,7 +107,10 @@ export default function QuizCard({ quiz }) {
     return (
         <div className=" relative border border-[#525252] rounded-md">
             <div className="bg-purple-500 h-32 flex items-center justify-center rounded-t-md relative">
-                <h1 className="text-3xl font-semibold text-white">Quiz 10</h1>
+                <h1 className="text-3xl font-semibold text-white">
+                    Quiz{" "}
+                    {totalMarkGenerate(singleQuestionMark, questions?.length)}
+                </h1>
                 <div className=" absolute bottom-0 left-0 bg-yellow-300 px-2 after:content[''] after:w-5 after:h-full after:bg-red-400 ">
                     <span className="text-xs text-gray-600">
                         @{admin?.split("@")[0]}
@@ -167,10 +164,7 @@ export default function QuizCard({ quiz }) {
                             {isOpen && (
                                 <div className="absolute bg-[#343434] top-1 -left-20 z-10 shadow-sm">
                                     <ul>
-                                        <li
-                                            onClick={modalOpenHide}
-                                            className=" relative py-1 px-3 cursor-pointer hover:bg-[#525252] text-white text-xs"
-                                        >
+                                        <li className=" relative py-1 px-3 cursor-pointer hover:bg-[#525252] text-white text-xs">
                                             <CopyToClipboard
                                                 text={`${URL}/quiz/${id}`}
                                                 onCopy={copyController}
@@ -197,26 +191,40 @@ export default function QuizCard({ quiz }) {
                                             )}
                                         </li>
                                         {email === admin && (
-                                            <li>
-                                                <button
-                                                    disabled={deleting}
-                                                    onClick={quizDeleteHandler}
-                                                    className={`flex items-center py-1 px-3 gap-1 hover:bg-[#525252] text-white text-xs ${
-                                                        deleting &&
-                                                        "cursor-wait bg-[#525252]"
-                                                    }`}
-                                                >
-                                                    {deleting ? (
-                                                        <i className="fa fa-spinner animate-spin"></i>
-                                                    ) : (
-                                                        <i
-                                                            className="fa fa-minus-circle text-red-400"
-                                                            aria-hidden="true"
-                                                        ></i>
-                                                    )}
-                                                    Delete
-                                                </button>
-                                            </li>
+                                            <>
+                                                <li>
+                                                    <button
+                                                        disabled={deleting}
+                                                        onClick={
+                                                            quizDeleteHandler
+                                                        }
+                                                        className={`flex items-center py-1 px-3 gap-1 hover:bg-[#525252] text-white text-xs ${
+                                                            deleting &&
+                                                            "cursor-wait bg-[#525252]"
+                                                        }`}
+                                                    >
+                                                        {deleting ? (
+                                                            <i className="fa fa-spinner animate-spin"></i>
+                                                        ) : (
+                                                            <i
+                                                                className="fa fa-minus-circle text-red-400"
+                                                                aria-hidden="true"
+                                                            ></i>
+                                                        )}
+                                                        Delete
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button
+                                                        onClick={() =>
+                                                            controller(id)
+                                                        }
+                                                        className={`flex items-center py-1 px-3 gap-1 hover:bg-[#525252] text-white text-xs`}
+                                                    >
+                                                        Participates Result
+                                                    </button>
+                                                </li>
+                                            </>
                                         )}
                                     </ul>
                                 </div>

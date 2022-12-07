@@ -1,17 +1,26 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCreatedQuizzes, fetchQuiz } from "../../fetures/quiz/quizSlice";
 import AddQuizCard from "./AddQuizCard";
 import Blank from "./Blank";
+import ParticipatesModal from "./ParticipatesModal";
 import QuizCard from "./QuizCard";
 import Search from "./Search";
 
-export default function QuizList({ modalOpen }) {
+export default function QuizList() {
+    const [isOpenModal, setIsOpenModal] = useState(false);
+    const [currentQuizId, setCurrentQuizId] = useState(false);
+
     const { allQuiz, createdQuizzes, loading, isError, error } =
         useSelector((state) => state.quiz) || {};
     const { user } = useSelector((state) => state.auth);
 
     const dispatch = useDispatch();
+
+    const modalHandler = (quizId) => {
+        setCurrentQuizId(quizId);
+        setIsOpenModal(!isOpenModal);
+    };
 
     useEffect(() => {
         dispatch(fetchQuiz(user?.id));
@@ -104,9 +113,13 @@ export default function QuizList({ modalOpen }) {
                 </h2>
                 <div className="grid grid-cols-1 gap-10 md:grid-cols-3 lg:grid-cols-4 md:gap-10 lg:gap-16 pt-5">
                     {createdQuizzes.map((quiz) => (
-                        <QuizCard key={quiz?.id} quiz={quiz} />
+                        <QuizCard
+                            key={quiz?.id}
+                            quiz={quiz}
+                            controller={modalHandler}
+                        />
                     ))}
-                    <AddQuizCard modalOpen={modalOpen} />
+                    <AddQuizCard />
                 </div>
             </div>
         );
@@ -119,7 +132,7 @@ export default function QuizList({ modalOpen }) {
                     Your created quiz
                 </h2>
                 <div className="grid grid-cols-1 gap-10 md:grid-cols-3 lg:grid-cols-4 md:gap-10 lg:gap-16 pt-5">
-                    <AddQuizCard modalOpen={modalOpen} />
+                    <AddQuizCard />
                 </div>
             </div>
         );
@@ -128,6 +141,11 @@ export default function QuizList({ modalOpen }) {
     return (
         <div className="px-5 md:px-0 lg:px-0">
             <Search />
+            <ParticipatesModal
+                isOpen={isOpenModal}
+                close={modalHandler}
+                quizId={currentQuizId}
+            />
             {createdContend}
             {participatedContend}
         </div>
